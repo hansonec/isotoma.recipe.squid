@@ -33,7 +33,8 @@ from isotoma.recipe import gocaptain
 def split(lst):
     new_lst = []
     for itm in lst.strip().split("\n"):
-        new_lst.append(itm)
+        if itm != '':
+            new_lst.append(itm)
     return new_lst
 
 class Squid(object):
@@ -118,6 +119,7 @@ class Squid(object):
         self.options["__hashes_template"] = sha1(open(self.options["template"]).read()).hexdigest()
 
         self.options.setdefault("custom-access-rules", '')
+        self.options.setdefault("custom-cache-dir", '')
 
     def install(self):
         location=self.options["location"]
@@ -172,6 +174,7 @@ class Squid(object):
             "default_refresh": self.options["default-refresh"],
             "hosts_file": self.options["hosts-file"],
             "custom_access_rules": split(self.options["custom-access-rules"]),
+            "custom_cache_dir": split(self.options["custom-cache-dir"]),
             })
         open(config, "w").write(str(c))
         self.options.created(self.options["config"])

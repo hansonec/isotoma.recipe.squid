@@ -92,7 +92,6 @@ The config was indeed created::
   <BLANKLINE>
   # INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS
   <BLANKLINE>
-  <BLANKLINE>
   # And finally deny all other access to this proxy
   http_access deny all
   <BLANKLINE>
@@ -134,6 +133,9 @@ Let us test some additional options::
   ... custom-access-rules = 
   ...   acl msn urlpath_regex -i gateway.dll
   ...   http_access allow msn
+  ... custom-cache-dir =
+  ...   ufs ${buildout:directory}/var/squid/cache01 5000 16 256
+  ...   ufs ${buildout:directory}/var/squid/cache02 5000 16 256
   ... ''')
 
 Now we can run buildout::
@@ -149,6 +151,8 @@ The config was indeed created::
   ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
   # Normal stuff we control from recipe
   http_port 3128
+  cache_dir ufs /sample-buildout/var/squid/cache01 5000 16 256
+  cache_dir ufs /sample-buildout/var/squid/cache02 5000 16 256
     ...
   # INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS
   acl msn urlpath_regex -i gateway.dll
