@@ -18,8 +18,10 @@ Lets create a minimal `buildout.cfg` file::
 Now we can run buildout::
 
   >>> print system(join('bin', 'buildout')),
+  ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
   Installing squid.
   YYYY/MM/DD HH:MM:SS| Creating Swap Directories
+    ...
 
 The config was indeed created::
 
@@ -33,7 +35,7 @@ The config was indeed created::
   coredump_dir /sample-buildout/parts/squid/coredump
   pid_filename /sample-buildout/var/squid.pid
   <BLANKLINE>
-  acl all src all
+  #acl all src all
   acl manager proto cache_object
   acl localhost src 127.0.0.1/32
   acl to_localhost dst 127.0.0.0/8
@@ -88,6 +90,9 @@ The config was indeed created::
   # from where browsing should be allowed
   http_access allow localnet
   <BLANKLINE>
+  # INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS
+  <BLANKLINE>
+  <BLANKLINE>
   # And finally deny all other access to this proxy
   http_access deny all
   <BLANKLINE>
@@ -104,14 +109,49 @@ The config was indeed created::
   refresh_pattern . 0 20% 4320
   <BLANKLINE>
   # Don't upgrade shoutcast responses to HTTP
-  acl shoutcast rep_header X-HTTP09-First-Line ^ICY.[0-9]
-  upgrade_http0.9 deny shoutcast
+  #acl shoutcast rep_header X-HTTP09-First-Line ^ICY.[0-9]
+  #upgrade_http0.9 deny shoutcast
   <BLANKLINE>
   # Apache mod_gzip and mod_deflate known to be broken, so dont trust
-  acl apache rep_header Server ^Apache
-  broken_vary_encoding allow apache
+  #acl apache rep_header Server ^Apache
+  #broken_vary_encoding allow apache
   <BLANKLINE>
   # Squid only knows about standard HTTP requests - allow up to 20 additional methods here
-  extension_methods REPORT MERGE MKACTIVITY CHECKOUT
+  #extension_methods REPORT MERGE MKACTIVITY CHECKOUT
   <BLANKLINE>
+
+Let us test some additional options::
+
+  >>> write('buildout.cfg',
+  ... '''
+  ... [buildout]
+  ... parts = squid
+  ... offline = true
+  ...
+  ... [squid]
+  ... recipe = isotoma.recipe.squid
+  ... port = 3128
+  ... custom-access-rules = 
+  ...   acl msn urlpath_regex -i gateway.dll
+  ...   http_access allow msn
+  ... ''')
+
+Now we can run buildout::
+
+  >>> print system(join('bin', 'buildout')),
+  ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
+  Uninstalling squid.
+  Installing squid.
+
+The config was indeed created::
+
+  >>> cat('parts/squid/squid.conf')
+  ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
+  # Normal stuff we control from recipe
+  http_port 3128
+    ...
+  # INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS
+  acl msn urlpath_regex -i gateway.dll
+  http_access allow msn
+    ...
 
