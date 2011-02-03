@@ -120,6 +120,7 @@ class Squid(object):
 
         self.options.setdefault("custom-access-rules", '')
         self.options.setdefault("custom-cache-dir", '')
+        self.options.setdefault("extra-options", '')
 
     def install(self):
         location=self.options["location"]
@@ -175,6 +176,7 @@ class Squid(object):
             "hosts_file": self.options["hosts-file"],
             "custom_access_rules": split(self.options["custom-access-rules"]),
             "custom_cache_dir": split(self.options["custom-cache-dir"]),
+            "extra_options": split(self.options["extra-options"]),
             })
         open(config, "w").write(str(c))
         self.options.created(self.options["config"])

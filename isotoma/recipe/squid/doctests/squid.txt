@@ -26,6 +26,7 @@ Now we can run buildout::
 The config was indeed created::
 
   >>> cat('parts/squid/squid.conf')
+  ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
   # Normal stuff we control from recipe
   http_port 3128
   cache_dir ufs /sample-buildout/var/squid 5000 16 256
@@ -136,6 +137,9 @@ Let us test some additional options::
   ... custom-cache-dir =
   ...   ufs ${buildout:directory}/var/squid/cache01 5000 16 256
   ...   ufs ${buildout:directory}/var/squid/cache02 5000 16 256
+  ... extra-options =
+  ...   visible_hostname proxy.domain.com
+  ...   unique_hostname proxy3.domain.com
   ... ''')
 
 Now we can run buildout::
@@ -158,4 +162,6 @@ The config was indeed created::
   acl msn urlpath_regex -i gateway.dll
   http_access allow msn
     ...
+  visible_hostname proxy.domain.com
+  unique_hostname proxy3.domain.com
 
