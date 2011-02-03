@@ -117,6 +117,8 @@ class Squid(object):
         # Record a SHA1 of the template we use, so we can detect changes in subsequent runs
         self.options["__hashes_template"] = sha1(open(self.options["template"]).read()).hexdigest()
 
+        self.options.setdefault("custom-access-rules", '')
+
     def install(self):
         location=self.options["location"]
         if not os.path.exists(location):
@@ -169,6 +171,7 @@ class Squid(object):
             "refresh_patterns": split(self.options["refresh-patterns"]),
             "default_refresh": self.options["default-refresh"],
             "hosts_file": self.options["hosts-file"],
+            "custom_access_rules": split(self.options["custom-access-rules"]),
             })
         open(config, "w").write(str(c))
         self.options.created(self.options["config"])
